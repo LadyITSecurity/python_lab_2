@@ -9,8 +9,22 @@ class Validator:
     def __init__(self, data: list):
         self._collection = data
 
-    def check_valiable_information(self, i: int) -> bool:
-        if self.check_email(i) & self.check_height(i) & self.check_inn(i) & self.check_passport_number(i) & self.check_university(i) & self.check_age(i) & self.check_academic_degree(i) & self.check_worldview(i) & self.check_address(i):
+    def get_profile(self, i: int) -> dict:
+        return (self._collection[i]).copy()
+
+    def get_count_of_profile(self) -> int:
+        return len(self._collection)
+
+    def check_valid_information(self, i: int) -> bool:
+        if self.check_email(i) \
+                and self.check_height(i) \
+                and self.check_inn(i) \
+                and self.check_passport_number(i) \
+                and self.check_university(i) \
+                and self.check_age(i) \
+                and self.check_academic_degree(i) \
+                and self.check_worldview(i) \
+                and self.check_address(i):
             return True
         return False
 
@@ -21,23 +35,23 @@ class Validator:
         return False
 
     def check_height(self, i: int) -> bool:
-        if isinstance(self._collection[i].get("height"), float):
-            if 1.5 <= self._collection[i].get("height") <= 2.00:
-                return True
-            return False
+        if re.match(r'\d.\d{2}', self._collection[i].get("inn")):
+            return True
+        return False
 
     def check_inn(self, i: int) -> bool:
-        if not re.match(r'\d{12}', self._collection[i].get("inn")):
+        if re.match(r'\d{12}', self._collection[i].get("inn")):
             return True
         return False
 
     def check_passport_number(self, i: int) -> bool:
-        if re.match(r'\d{6}', str(self._collection[i].get("passport_number"))):
-            return True
-        return False
+        if isinstance(self._collection[i].get("passport_number"), int):
+            if 0 <= self._collection[i].get("passport_number") <= 999999:
+                return True
+            return False
 
     def check_university(self, i: int) -> bool:
-        pattern = '([Уу]ниверситет| [Ии]нститут|[Aа]кадем|им. |[Пп]олитех|([А-Я]{3,}))+(\s|[а-я])'
+        pattern = '[Уу]ниверситет| [Ии]нститут|[Aа]кадем|им. |[Пп]олитех|'
         if re.match(pattern, self._collection[i]["university"]) is not None:
             return True
         return False
@@ -55,8 +69,8 @@ class Validator:
         return False
 
     def check_worldview(self, i: int) -> bool:
-        pattern = 'Христианство|Ислам|Буддизм|Иудаизм|Индуизм|Атеизм|Агностицизм|Деизм|Пантеизм|Католизм'
-        if re.match(pattern, self._collection[i]["academic_degree"]) is not None:
+        pattern = 'Христианство|Ислам|Буддизм|Иудаизм|Индуизм|Атеизм|Агностицизм|Конфуцианство|Деизм|Пантеизм|Католизм|Секулярный гуманизм'
+        if re.match(pattern, self._collection[i]["worldview"]) is not None:
             return True
         return False
 
@@ -66,7 +80,7 @@ class Validator:
             return True
         return False
 
-    def count_invalid_arguments(self):
+    def count_invalid_arguments(self) -> list:
 
         count_of_error = 0
         wrong_email = 0
@@ -82,8 +96,8 @@ class Validator:
         flag = False
 
         for i in tqdm(range(len(self._collection)),
-                      desc="Проверка записей на коректность и получение статистики",
-                      ncols=1000):
+                      desc="Проверка корректности данных:",
+                      ncols=200):
             if not self.check_email(i):
                 wrong_email += 1
                 flag = True
@@ -115,7 +129,7 @@ class Validator:
                 count_of_error += 1
                 flag = False
 
-        result.append(len(self._collection))
+        result.append(len(self._collection)-count_of_error)
         result.append(count_of_error)
         result.append(wrong_email)
         result.append(wrong_height)
@@ -127,4 +141,8 @@ class Validator:
         result.append(wrong_worldview)
         result.append(wrong_address)
         return result
+
+    @property
+    def collection(self):
+        return self._collection
 

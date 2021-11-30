@@ -1,15 +1,15 @@
-#from person_profile import Person_profile
 from validator import Validator
 from work_with_file import Read_file
+from work_with_file import Write_file
 import argparse
 
 
-filename = 'D:\\documents\\01 - study\\5 семестр\\python_lab_2\\15.txt'
+#filename = 'D:\\documents\\01 - study\\5 семестр\\python_lab_2\\15.txt'
 
 
 parser = argparse.ArgumentParser("Input & output path")
-parser.add_argument("-read", type=str, default="15.txt", help="Read path")
-parser.add_argument("-write", type=str, default="result.txt", help="Write path")
+parser.add_argument("-read", type=str, default="15.txt", help="read file")
+parser.add_argument("-write", type=str, default="result.txt", help="write file")
 pars = parser.parse_args()
 lines = Read_file(pars.read)
 data = Validator(lines.array_list())
@@ -27,6 +27,7 @@ print("Некорректных указаний ученой степени: ",
 print("Некорректных указаний мировоззрения: ", result[9])
 print("Некорректных указаний адреса: ", result[10])
 
-
+write = Write_file(pars.write)
+write.write_file(data)
 
 
