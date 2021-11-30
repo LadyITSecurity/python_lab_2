@@ -1,7 +1,7 @@
 import json
+import person_profile
 
 
-# класс чтения данных из файла по заданному пути
 class Read_file:
     _filename: str
     _array: list = []
@@ -10,7 +10,7 @@ class Read_file:
         self._file_path = file_path
         data = json.load(open(self._file_path, encoding="windows-1251"))
         for i in data:
-            self._array.append(i)
+            self._array.append(person_profile)
 
     def array_list(self) -> list:
         return self._array.copy()
